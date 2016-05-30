@@ -129,11 +129,25 @@
     NSArray *stringAsArray = [string componentsSeparatedByString:@" "];
     
     // forming new dictionary
+    // algorithmic complexity n
     NSMutableDictionary *myDictionary = [[NSMutableDictionary alloc] init];
-    for (NSString *element in stringAsArray) {
-        NSPredicate *howManyTimesISeeYou = [NSPredicate predicateWithFormat:@"self MATCHES %@", element];
-        NSNumber *intHowManyTimesISeeYou = @([[stringAsArray filteredArrayUsingPredicate:howManyTimesISeeYou] count]);
-        myDictionary[element] = intHowManyTimesISeeYou;
+    for (NSString *word in stringAsArray) {
+        if ([myDictionary objectForKey:word] == nil) {
+            myDictionary[word] = @(1);
+        } else {
+            NSUInteger intHowManyTimesISeeYou = [myDictionary[word] integerValue];
+            intHowManyTimesISeeYou++;
+            myDictionary[word] = @(intHowManyTimesISeeYou);
+        }
+        
+    // single line
+    // myDictionary[word] = @(([myDictionary objectForKey:word] == nil ? 0 : [myDictionary[word] integerValue]) + 1);
+        
+/*  // algorithmic complexity n^2
+    NSPredicate *howManyTimesISeeYou = [NSPredicate predicateWithFormat:@"self MATCHES %@", element];
+    NSNumber *intHowManyTimesISeeYou = @([[stringAsArray filteredArrayUsingPredicate:howManyTimesISeeYou] count]);
+    myDictionary[element] = intHowManyTimesISeeYou;
+*/
     }
     return myDictionary;
 }
@@ -149,6 +163,10 @@
         } else {
             artistDictionary[key] = [@[value] mutableCopy];
         }
+    }
+    for (NSString *artist in [artistDictionary allKeys]) {
+        NSSortDescriptor *lowestToHighest = [NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES];
+        artistDictionary[artist] = [artistDictionary[artist] sortedArrayUsingDescriptors:@[lowestToHighest]];
     }
     return artistDictionary;
 }
