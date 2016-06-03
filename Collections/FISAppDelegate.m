@@ -119,12 +119,12 @@
 
 - (NSDictionary *)countsOfWordsInString:(NSString *)string {
     // dictionary: "key" is word and "value" is how many times that word appears in string
-    
+    //
     // cleaning up string
-    string =[string stringByReplacingOccurrencesOfString:@"." withString:@""];
-    string =[string stringByReplacingOccurrencesOfString:@"," withString:@""];
-    string =[string stringByReplacingOccurrencesOfString:@"-" withString:@""];
-    string =[string stringByReplacingOccurrencesOfString:@";" withString:@""];
+    NSArray *punctuation = @[@".", @",", @"-", @";"];
+    for (NSUInteger i = 0; i < [punctuation count]; i++) {
+        string =[string stringByReplacingOccurrencesOfString:punctuation[i] withString:@""];
+    }
     string =[string lowercaseString];
     NSArray *stringAsArray = [string componentsSeparatedByString:@" "];
     
@@ -153,22 +153,24 @@
 }
 
 - (NSDictionary *)songsGroupedByArtistFromArray:(NSArray *)array {
-    NSMutableDictionary *artistDictionary = [[NSMutableDictionary alloc] init];
+    // algorithmic complexity n
+    NSMutableDictionary *artistAndSongsDictionary = [[NSMutableDictionary alloc] init];
     for (NSString *atristSongPeer in array) {
         NSArray *currentAtristSongPeer = [atristSongPeer componentsSeparatedByString:@" - "];
         NSString *key = currentAtristSongPeer[0];
-        NSMutableArray *value = currentAtristSongPeer[1];
-        if ([[artistDictionary allKeys] containsObject:key]) {
-            [artistDictionary[key] addObject:value];
+        NSString *value = currentAtristSongPeer[1];
+        if (artistAndSongsDictionary[key] == nil) {
+            artistAndSongsDictionary[key] = [NSMutableArray arrayWithObjects:value, nil];
         } else {
-            artistDictionary[key] = [@[value] mutableCopy];
+            [artistAndSongsDictionary[key] addObject:value];
         }
     }
-    for (NSString *artist in [artistDictionary allKeys]) {
+    for (NSString *artist in [artistAndSongsDictionary allKeys]) {
         NSSortDescriptor *lowestToHighest = [NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES];
-        artistDictionary[artist] = [artistDictionary[artist] sortedArrayUsingDescriptors:@[lowestToHighest]];
+        artistAndSongsDictionary[artist] = [artistAndSongsDictionary[artist] sortedArrayUsingDescriptors:@[lowestToHighest]];
     }
-    return artistDictionary;
+    NSLog(@"%@", artistAndSongsDictionary);
+    return artistAndSongsDictionary;
 }
 
 @end
